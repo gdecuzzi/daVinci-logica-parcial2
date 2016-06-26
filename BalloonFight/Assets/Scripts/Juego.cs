@@ -5,21 +5,33 @@ using System;
 
 public class Juego : MonoBehaviour {
 
-    public Sprite imagenJugador1Globo;
-    public Sprite imagenJugador2Globos;
-    public GameObject jugador;
-    public int velocidadJugador;
-    public float fuerzaMovimientoVerticalJugador;
-    public Vector2 posicionInicialJugador = new Vector2(-10f,-2.8f);
-    public int cantidadGlobosJugador;
-    public List<GameObject> vidasJugador = new List<GameObject>();
-    public float FUERZA_INICIAL_JUGADOR = 4f;
-    public int VELOCIDAD_INICIAL_JUGADOR = 2;
-
-
+    #region Configuracion general del juego
     public int LIMITE_DERECHO = 14;
     public int CANTIDAD_MAXIMA_GLOBOS = 2;
     public int CANTIDAD_MAXIMA_VIDAS = 2;
+    #endregion
+
+    #region Definicion jugador
+    public GameObject jugador;
+
+    #region posibles imagenes
+    public Sprite imagenJugador1Globo;
+    public Sprite imagenJugador2Globos;
+    public Sprite imagenJugadorMuerto;
+    #endregion posibles imagenes
+
+    #region estado
+    public int velocidadJugador;
+    public float fuerzaMovimientoVerticalJugador;
+    public int cantidadGlobosJugador;
+    public List<GameObject> vidasJugador = new List<GameObject>();
+    #endregion
+    #region configuracion
+    public Vector2 posicionInicialJugador = new Vector2(-10f,-2.8f);
+    public float FUERZA_INICIAL_JUGADOR = 4f;
+    public int VELOCIDAD_INICIAL_JUGADOR = 2;
+    #endregion
+    #endregion
 
     public GameObject moldeVida;
 
@@ -76,21 +88,18 @@ public class Juego : MonoBehaviour {
 
     protected void PerderGlobo()
     {
-        print("Empiezo con Globos: " + cantidadGlobosJugador + " vidas: " + vidasJugador.Count);
-
         ExplotarGlobo();
         if (cantidadGlobosJugador <= 0) {
             PerderVida();
         }
-
-        print("Termino con Globos: " + cantidadGlobosJugador + " vidas: " + vidasJugador) ;
     }
 
+
+    #region manejo de vidas y globos del jugador
     private void ExplotarGlobo()
     {
         cantidadGlobosJugador -= 1;
-        var spriteActual =  jugador.GetComponent<SpriteRenderer>();
-        spriteActual.sprite = imagenJugador1Globo;
+        CambiarImagen(jugador, imagenJugador1Globo);
         //como tenemos menos globos nos movemos mas lento
         fuerzaMovimientoVerticalJugador -= 2f;
         velocidadJugador += 2;
@@ -99,11 +108,6 @@ public class Juego : MonoBehaviour {
 
     private void PerderVida()
     {
-        if (vidasJugador.Count == 0)
-        {
-            return;
-        }
-
         EliminarIndicadorDeVida();
         if (vidasJugador.Count == 0)
         {
@@ -124,8 +128,7 @@ public class Juego : MonoBehaviour {
 
     private void RespawnearJugador()
     {
-        var spriteActual = jugador.GetComponent<SpriteRenderer>();
-        spriteActual.sprite = imagenJugador2Globos;
+        CambiarImagen(jugador, imagenJugador2Globos);
         cantidadGlobosJugador = CANTIDAD_MAXIMA_GLOBOS;
         jugador.transform.position =posicionInicialJugador;
         fuerzaMovimientoVerticalJugador = FUERZA_INICIAL_JUGADOR;
@@ -135,12 +138,15 @@ public class Juego : MonoBehaviour {
     private void PerderJuego()
     {
         print("You loose... shame on you");
+        jugador.transform.position = new Vector2(0, 0);
+        CambiarImagen(jugador, imagenJugadorMuerto);
         fuerzaMovimientoVerticalJugador = 0f;
         velocidadJugador = 0;
     }
+    #endregion
 
+    #region manejar el movimiento de los elementos en la escena
 
-    //Auxiliares para manejar el movimiento de los elementos en la escena
     private void ModificarAltura(GameObject objeto, int direccion, float fuerzaDeMovimiento)
     {
         Rigidbody2D rb = objeto.GetComponent<Rigidbody2D>();
@@ -173,6 +179,11 @@ public class Juego : MonoBehaviour {
 
         PerderGlobo();
     }
+    #endregion
 
-    //----- FIN: Auxiliares para manejar el movimiento de los elementos en la escena -----
+    private void CambiarImagen(GameObject target, Sprite nuevaImagen)
+    {
+        var spriteActual = target.GetComponent<SpriteRenderer>();
+        spriteActual.sprite = nuevaImagen;
+    }
 }
