@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System;
 
 public class Juego : MonoBehaviour {
+
+    public Sprite imagenJugador1Globo;
+    public Sprite imagenJugador2Globos;
     public GameObject jugador;
     public int velocidadJugador;
     public float fuerzaMovimientoVerticalJugador;
@@ -86,6 +89,8 @@ public class Juego : MonoBehaviour {
     private void ExplotarGlobo()
     {
         cantidadGlobosJugador -= 1;
+        var spriteActual =  jugador.GetComponent<SpriteRenderer>();
+        spriteActual.sprite = imagenJugador1Globo;
         //como tenemos menos globos nos movemos mas lento
         fuerzaMovimientoVerticalJugador -= 2f;
         velocidadJugador += 2;
@@ -119,6 +124,8 @@ public class Juego : MonoBehaviour {
 
     private void RespawnearJugador()
     {
+        var spriteActual = jugador.GetComponent<SpriteRenderer>();
+        spriteActual.sprite = imagenJugador2Globos;
         cantidadGlobosJugador = CANTIDAD_MAXIMA_GLOBOS;
         jugador.transform.position =posicionInicialJugador;
         fuerzaMovimientoVerticalJugador = FUERZA_INICIAL_JUGADOR;
