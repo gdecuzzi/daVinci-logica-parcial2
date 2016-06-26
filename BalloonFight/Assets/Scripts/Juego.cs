@@ -3,24 +3,27 @@ using System.Collections;
 using System;
 
 public class Juego : MonoBehaviour {
+    public GameObject jugador;
+    public int velocidadJugador;
+    public float fuerzaMovimientoVerticalJugador;
+    public Vector2 posicionInicialJugador = new Vector2(-10f,-2.8f);
+    public int cantidadGlobosJugador;
+    public int cantidadVidasJugador;
 
-    GameObject jugador;
-    int velocidadJugador;
-    float fuerzaMovimientoVerticalJugador;
-
-    int limiteDerecho = 14;
+    public int limiteDerecho = 14;
+    public int CANTIDAD_MAXIMA_GLOBOS = 2;
 
 
 
     // Use this for initialization
     void Start () {
+        cantidadVidasJugador = 2;
+        cantidadGlobosJugador = CANTIDAD_MAXIMA_GLOBOS;
 
         jugador = GameObject.Find("jugador-2globos");
-        velocidadJugador = 3;
+        velocidadJugador = 2;
         fuerzaMovimientoVerticalJugador = 4f;
-
-
-
+        jugador.transform.position = posicionInicialJugador;
     }
 
     void Update()
@@ -50,6 +53,41 @@ public class Juego : MonoBehaviour {
         }
     }
 
+
+    private void PerderGlobo()
+    {
+        print("Empiezo con Globos: " + cantidadGlobosJugador + " vidas: " + cantidadVidasJugador);
+
+        cantidadGlobosJugador -= 1;
+        if (cantidadGlobosJugador <= 0) {
+            cantidadVidasJugador -= 1;
+
+            if (cantidadVidasJugador <= 0)
+            {
+                PerderJuego();
+            }
+            else
+            {
+                RespawnearJugador();
+            }
+        }
+
+        print("Termino con Globos: " + cantidadGlobosJugador + " vidas: " + cantidadVidasJugador) ;
+    }
+
+    private void RespawnearJugador()
+    {
+        cantidadGlobosJugador = CANTIDAD_MAXIMA_GLOBOS;
+        jugador.transform.position =posicionInicialJugador;
+    }
+
+    private void PerderJuego()
+    {
+        print("You loose... shame on you");
+    }
+
+
+    //Auxiliares para manejar el movimiento de los elementos en la escena
     private void ModificarAltura(GameObject objeto, int direccion, float fuerzaDeMovimiento)
     {
         Rigidbody2D rb = objeto.GetComponent<Rigidbody2D>();
@@ -76,5 +114,12 @@ public class Juego : MonoBehaviour {
     private void MoverObjetoEnX(GameObject objeto, int nuevoX)
     {
         objeto.transform.position = new Vector2(nuevoX, objeto.transform.position.y);
+
+
+
+
+        PerderGlobo();
     }
+
+    //----- FIN: Auxiliares para manejar el movimiento de los elementos en la escena -----
 }
