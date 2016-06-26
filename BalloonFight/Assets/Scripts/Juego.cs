@@ -7,6 +7,7 @@ public class Juego : MonoBehaviour {
 
     #region Configuracion general del juego
     public int LIMITE_DERECHO = 10;
+    public int LIMITE_SUPERIOR = 5;
     public int CANTIDAD_MAXIMA_GLOBOS = 2;
     public int CANTIDAD_MAXIMA_VIDAS = 2;
     #endregion
@@ -60,7 +61,16 @@ public class Juego : MonoBehaviour {
 
     void Update()
     {
+        CheckearJugadorAhogado();
         MovimientoDelJugador(jugador, velocidadJugador, fuerzaMovimientoVerticalJugador);
+    }
+
+    private void CheckearJugadorAhogado()
+    {
+        if (jugador.transform.position.y < -LIMITE_SUPERIOR)
+        {
+            PerderVida();
+        }
     }
 
     private void MovimientoDelJugador(GameObject jugador, int velocidad, float fuerzaMovimiento)
