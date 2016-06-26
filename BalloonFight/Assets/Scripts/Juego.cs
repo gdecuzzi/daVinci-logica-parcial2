@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 
 public class Juego : MonoBehaviour {
@@ -8,22 +9,38 @@ public class Juego : MonoBehaviour {
     public float fuerzaMovimientoVerticalJugador;
     public Vector2 posicionInicialJugador = new Vector2(-10f,-2.8f);
     public int cantidadGlobosJugador;
-    public int cantidadVidasJugador;
+    public List<GameObject> vidasJugador = new List<GameObject>();
+    public float FUERZA_INICIAL_JUGADOR = 4f;
+    public int VELOCIDAD_INICIAL_JUGADOR = 2;
 
-    public int limiteDerecho = 14;
+
+    public int LIMITE_DERECHO = 14;
     public int CANTIDAD_MAXIMA_GLOBOS = 2;
+    public int CANTIDAD_MAXIMA_VIDAS = 2;
+
+    public GameObject moldeVida;
 
 
 
     // Use this for initialization
     void Start () {
-        cantidadVidasJugador = 2;
-        cantidadGlobosJugador = CANTIDAD_MAXIMA_GLOBOS;
-
         jugador = GameObject.Find("jugador-2globos");
-        velocidadJugador = 2;
-        fuerzaMovimientoVerticalJugador = 4f;
-        jugador.transform.position = posicionInicialJugador;
+
+        RespawnearJugador();
+        CrearVidas();
+    }
+
+    private void CrearVidas()
+    {
+        float posicionX = -12.5f;
+        float posicionY = 4.5f;
+        float separacionX = 0.5f;
+        for (int i = 0; i < CANTIDAD_MAXIMA_VIDAS; i++)
+        {
+            GameObject vida = Instantiate(moldeVida);
+            vida.transform.position = new Vector2(posicionX + separacionX * i, posicionY);
+            vidasJugador.Add(vida);
+        }
     }
 
     void Update()
@@ -54,36 +71,65 @@ public class Juego : MonoBehaviour {
     }
 
 
-    private void PerderGlobo()
+    protected void PerderGlobo()
     {
-        print("Empiezo con Globos: " + cantidadGlobosJugador + " vidas: " + cantidadVidasJugador);
+        print("Empiezo con Globos: " + cantidadGlobosJugador + " vidas: " + vidasJugador.Count);
 
-        cantidadGlobosJugador -= 1;
+        ExplotarGlobo();
         if (cantidadGlobosJugador <= 0) {
-            cantidadVidasJugador -= 1;
-
-            if (cantidadVidasJugador <= 0)
-            {
-                PerderJuego();
-            }
-            else
-            {
-                RespawnearJugador();
-            }
+            PerderVida();
         }
 
-        print("Termino con Globos: " + cantidadGlobosJugador + " vidas: " + cantidadVidasJugador) ;
+        print("Termino con Globos: " + cantidadGlobosJugador + " vidas: " + vidasJugador) ;
+    }
+
+    private void ExplotarGlobo()
+    {
+        cantidadGlobosJugador -= 1;
+        //como tenemos menos globos nos movemos mas lento
+        fuerzaMovimientoVerticalJugador -= 2f;
+        velocidadJugador += 2;
+    }
+    
+
+    private void PerderVida()
+    {
+        if (vidasJugador.Count == 0)
+        {
+            return;
+        }
+
+        EliminarIndicadorDeVida();
+        if (vidasJugador.Count == 0)
+        {
+            PerderJuego();
+        }
+        else
+        {
+            RespawnearJugador();
+        }
+    }
+
+    private void EliminarIndicadorDeVida()
+    {
+        int indiceVidaPerdida = vidasJugador.Count - 1;
+        Destroy(vidasJugador[indiceVidaPerdida]);
+        vidasJugador.RemoveAt(indiceVidaPerdida);
     }
 
     private void RespawnearJugador()
     {
         cantidadGlobosJugador = CANTIDAD_MAXIMA_GLOBOS;
         jugador.transform.position =posicionInicialJugador;
+        fuerzaMovimientoVerticalJugador = FUERZA_INICIAL_JUGADOR;
+        velocidadJugador = VELOCIDAD_INICIAL_JUGADOR;
     }
 
     private void PerderJuego()
     {
         print("You loose... shame on you");
+        fuerzaMovimientoVerticalJugador = 0f;
+        velocidadJugador = 0;
     }
 
 
@@ -98,12 +144,12 @@ public class Juego : MonoBehaviour {
 
     private void Avanzar(GameObject objeto, int direccion, int velocidad)
     {
-        if(objeto.transform.position.x > limiteDerecho){
-            MoverObjetoEnX(objeto, -limiteDerecho);
+        if(objeto.transform.position.x > LIMITE_DERECHO){
+            MoverObjetoEnX(objeto, -LIMITE_DERECHO);
         }
-        else if(objeto.transform.position.x < -limiteDerecho)
+        else if(objeto.transform.position.x < -LIMITE_DERECHO)
         {
-            MoverObjetoEnX(objeto, limiteDerecho);
+            MoverObjetoEnX(objeto, LIMITE_DERECHO);
         }
         else
         {
