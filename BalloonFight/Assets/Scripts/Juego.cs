@@ -6,7 +6,7 @@ using System;
 public class Juego : MonoBehaviour {
 
     #region Configuracion general del juego
-    public int LIMITE_DERECHO = 14;
+    public int LIMITE_DERECHO = 10;
     public int CANTIDAD_MAXIMA_GLOBOS = 2;
     public int CANTIDAD_MAXIMA_VIDAS = 2;
     #endregion
@@ -27,7 +27,7 @@ public class Juego : MonoBehaviour {
     public List<GameObject> vidasJugador = new List<GameObject>();
     #endregion
     #region configuracion
-    public Vector2 posicionInicialJugador = new Vector2(-10f,-2.8f);
+    public Vector2 posicionInicialJugador = new Vector2(-10f,-3.2f);
     public float FUERZA_INICIAL_JUGADOR = 4f;
     public int VELOCIDAD_INICIAL_JUGADOR = 2;
     #endregion
