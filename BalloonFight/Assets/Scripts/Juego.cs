@@ -35,6 +35,7 @@ public class Juego : MonoBehaviour {
     #endregion
 
     public GameObject moldeVida;
+    public GameObject moldeGameOver;
 
 
 
@@ -152,6 +153,8 @@ public class Juego : MonoBehaviour {
         CambiarImagen(jugador, imagenJugadorMuerto);
         fuerzaMovimientoVerticalJugador = 0f;
         velocidadJugador = 0;
+        GameObject resultado = Instantiate(moldeGameOver);
+        resultado.transform.position = new Vector2(0,0);
     }
     #endregion
 
