@@ -7,7 +7,7 @@ public class Juego : MonoBehaviour {
 
     #region Configuracion general del juego
     public int LIMITE_DERECHO = 10;
-    public int LIMITE_SUPERIOR = 5;
+    public float LIMITE_SUPERIOR;
     public int CANTIDAD_MAXIMA_GLOBOS = 2;
     public int CANTIDAD_MAXIMA_VIDAS = 2;
     #endregion
@@ -27,11 +27,19 @@ public class Juego : MonoBehaviour {
     public int cantidadGlobosJugador;
     public List<GameObject> vidasJugador = new List<GameObject>();
     #endregion
+
     #region configuracion
     public Vector2 posicionInicialJugador = new Vector2(-10f,-3.2f);
     public float FUERZA_INICIAL_JUGADOR = 4f;
     public int VELOCIDAD_INICIAL_JUGADOR = 2;
     #endregion
+
+    #endregion
+
+    #region Configuracion de los enemigos
+    public GameObject Enemigo;
+    public List<Sprite> spriteEnemigos;
+    
     #endregion
 
     public GameObject moldeVida;
@@ -47,6 +55,15 @@ public class Juego : MonoBehaviour {
         CrearVidas();
     }
 
+    void Update()
+    {
+        CheckearJugadorAhogado();
+        MovimientoDelJugador(jugador, velocidadJugador, fuerzaMovimientoVerticalJugador);
+        MoverEnemigo();
+    }
+
+    #region manejo de vidas y globos del jugador
+
     private void CrearVidas()
     {
         float posicionX = -12.5f;
@@ -60,12 +77,6 @@ public class Juego : MonoBehaviour {
         }
     }
 
-    void Update()
-    {
-        CheckearJugadorAhogado();
-        MovimientoDelJugador(jugador, velocidadJugador, fuerzaMovimientoVerticalJugador);
-    }
-
     private void CheckearJugadorAhogado()
     {
         if (jugador.transform.position.y < -LIMITE_SUPERIOR)
@@ -76,26 +87,23 @@ public class Juego : MonoBehaviour {
 
     private void MovimientoDelJugador(GameObject jugador, int velocidad, float fuerzaMovimiento)
     {
-
         if (Input.GetKey(KeyCode.UpArrow))
         {
             ModificarAltura(jugador, 1, fuerzaMovimiento);
         }
-
         if (Input.GetKey(KeyCode.DownArrow))
         {
             ModificarAltura(jugador, -1, fuerzaMovimiento);
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            Avanzar(jugador, -1, velocidad);
+            Avanzar(jugador, jugador.transform.right * - 1, velocidad);
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            Avanzar(jugador,1, velocidad);
+            Avanzar(jugador, jugador.transform.right, velocidad);
         }
     }
-
 
     protected void PerderGlobo()
     {
@@ -105,8 +113,6 @@ public class Juego : MonoBehaviour {
         }
     }
 
-
-    #region manejo de vidas y globos del jugador
     private void ExplotarGlobo()
     {
         cantidadGlobosJugador -= 1;
@@ -116,7 +122,6 @@ public class Juego : MonoBehaviour {
         velocidadJugador += 2;
     }
     
-
     private void PerderVida()
     {
         EliminarIndicadorDeVida();
@@ -168,7 +173,7 @@ public class Juego : MonoBehaviour {
         rb.AddForce(Vector3.up * direccion* fuerzaDeMovimiento, ForceMode2D.Impulse);
     }
 
-    private void Avanzar(GameObject objeto, int direccion, int velocidad)
+    private void Avanzar(GameObject objeto, Vector3 destino, float velocidad)
     {
         if(objeto.transform.position.x > LIMITE_DERECHO){
             MoverObjetoEnX(objeto, -LIMITE_DERECHO);
@@ -179,20 +184,22 @@ public class Juego : MonoBehaviour {
         }
         else
         {
-            objeto.transform.position += objeto.transform.right * Time.deltaTime * velocidad * direccion;
+            objeto.transform.position += destino * Time.deltaTime * velocidad ;
         }
     }
 
-    private void MoverObjetoEnX(GameObject objeto, int nuevoX)
+    private void MoverObjetoEnX(GameObject objeto, float nuevoX)
     {
         objeto.transform.position = new Vector2(nuevoX, objeto.transform.position.y);
-
-
-
-
-        PerderGlobo();
     }
     #endregion
+
+    void MoverEnemigo()
+    {
+        float x = 1f;
+        float y = Mathf.Sin(Enemigo.transform.position.x * 0.5f) * LIMITE_SUPERIOR;
+        Avanzar(Enemigo, new Vector3(x, y), 0.7f);
+    }
 
     private void CambiarImagen(GameObject target, Sprite nuevaImagen)
     {
