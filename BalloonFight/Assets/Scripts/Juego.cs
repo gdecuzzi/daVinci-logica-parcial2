@@ -194,26 +194,12 @@ public class Juego : MonoBehaviour {
     }
     #endregion
 
- 
-
     void MoverEnemigo()
     {
-        print(Enemigo.transform.position);
-        float sentidoY;
-        if (Enemigo.transform.position.y >= LIMITE_SUPERIOR)
-        {
-            sentidoY = -1;
-        }
-        else
-        {
-            sentidoY = 1;
-        }
         float x = 1f;
         float y = Mathf.Sin(Enemigo.transform.position.x * 0.5f) * LIMITE_SUPERIOR;
-        Avanzar(Enemigo, new Vector3(x, y), 1.0f);
+        Avanzar(Enemigo, new Vector3(x, y), 0.7f);
     }
-
-
 
     private void CambiarImagen(GameObject target, Sprite nuevaImagen)
     {
