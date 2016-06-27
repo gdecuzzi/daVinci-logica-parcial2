@@ -7,7 +7,7 @@ public class Juego : MonoBehaviour {
 
     #region Configuracion general del juego
     public int LIMITE_DERECHO = 10;
-    public float LIMITE_SUPERIOR = 4.40f;
+    public float LIMITE_SUPERIOR;
     public int CANTIDAD_MAXIMA_GLOBOS = 2;
     public int CANTIDAD_MAXIMA_VIDAS = 2;
     #endregion
@@ -194,38 +194,26 @@ public class Juego : MonoBehaviour {
     }
     #endregion
 
+ 
 
     void MoverEnemigo()
-    {   
-        float x = 1f;
-        float sentidoY = 1;
-        float y = (Mathf.Sin(x * 0.5f) * LIMITE_SUPERIOR) * sentidoY;
-
+    {
+        print(Enemigo.transform.position);
+        float sentidoY;
         if (Enemigo.transform.position.y >= LIMITE_SUPERIOR)
         {
             sentidoY = -1;
         }
-
-        print(y);
-        print(Enemigo.transform.position);
-        Avanzar(Enemigo, new Vector3(x, y), 0.5f);
-
-        //if (Enemigo.transform.position.x > LIMITE_DERECHO)
-        //{
-        //    MoverObjetoEnX(Enemigo, -LIMITE_DERECHO);
-        //}
-        //else if (Enemigo.transform.position.x < -LIMITE_DERECHO)
-        //{
-        //    MoverObjetoEnX(Enemigo, LIMITE_DERECHO);
-        //}
-        //else
-        //{
-        //    Enemigo.transform.position += new Vector3(x, y);
-        //}
-
-
-        //print(Enemigo.transform.position);
+        else
+        {
+            sentidoY = 1;
+        }
+        float x = 1f;
+        float y = Mathf.Sin(Enemigo.transform.position.x * 0.5f) * LIMITE_SUPERIOR;
+        Avanzar(Enemigo, new Vector3(x, y), 1.0f);
     }
+
+
 
     private void CambiarImagen(GameObject target, Sprite nuevaImagen)
     {
