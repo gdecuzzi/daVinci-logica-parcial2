@@ -205,7 +205,6 @@ public class Juego : MonoBehaviour {
     void CrearEnemigos()
     {
         timer += Time.deltaTime;
-        print(timer);
         //Cada 5s invalido el timer sin importar que pase.
         if (timer >= 5.0f)
         {
@@ -216,7 +215,6 @@ public class Juego : MonoBehaviour {
                 enemigos.Add(CrearEnemigo(posicionInicial));
             }
         }
-
     }
 
     GameObject CrearEnemigo (Vector2 posicionInicial)
