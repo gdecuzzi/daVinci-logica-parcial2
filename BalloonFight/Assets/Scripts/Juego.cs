@@ -28,6 +28,7 @@ public class Juego : MonoBehaviour {
     public List<GameObject> vidasJugador = new List<GameObject>();
     #endregion
 
+
     #region configuracion
     public Vector2 posicionInicialJugador = new Vector2(-10f,-3.2f);
     public float FUERZA_INICIAL_JUGADOR = 4f;
@@ -37,9 +38,13 @@ public class Juego : MonoBehaviour {
     #endregion
 
     #region Configuracion de los enemigos
-    public GameObject Enemigo;
+    int CANTIDAD_MAXIMA_ENEMIGOS = 10;
+
     public List<Sprite> spriteEnemigos;
-    
+    public GameObject moldeEnemigo;
+    protected List<GameObject> enemigos = new List<GameObject>();
+    protected float timer;
+        
     #endregion
 
     public GameObject moldeVida;
@@ -50,7 +55,6 @@ public class Juego : MonoBehaviour {
     // Use this for initialization
     void Start () {
         jugador = GameObject.Find("jugador-2globos");
-
         RespawnearJugador();
         CrearVidas();
     }
@@ -59,7 +63,11 @@ public class Juego : MonoBehaviour {
     {
         CheckearJugadorAhogado();
         MovimientoDelJugador(jugador, velocidadJugador, fuerzaMovimientoVerticalJugador);
-        MoverEnemigo();
+        CrearEnemigos();
+        foreach (var enemigo in enemigos)
+        {
+            MoverEnemigo(enemigo);
+        }
     }
 
     #region manejo de vidas y globos del jugador
@@ -194,11 +202,35 @@ public class Juego : MonoBehaviour {
     }
     #endregion
 
-    void MoverEnemigo()
+    void CrearEnemigos()
+    {
+        timer += Time.deltaTime;
+        print(timer);
+        //Cada 5s invalido el timer sin importar que pase.
+        if (timer >= 5.0f)
+        {
+            timer = 0f;
+            if(enemigos.Count < CANTIDAD_MAXIMA_ENEMIGOS)
+            {
+                var posicionInicial = new Vector2(7.76f, - 3.29f);
+                enemigos.Add(CrearEnemigo(posicionInicial));
+            }
+        }
+
+    }
+
+    GameObject CrearEnemigo (Vector2 posicionInicial)
+    {
+        var Enemigo = Instantiate(moldeEnemigo);
+        Enemigo.transform.position = posicionInicial;
+        return Enemigo;
+    }
+
+    void MoverEnemigo(GameObject UnEnemigo)
     {
         float x = 1f;
-        float y = Mathf.Sin(Enemigo.transform.position.x * 0.5f) * LIMITE_SUPERIOR;
-        Avanzar(Enemigo, new Vector3(x, y), 0.7f);
+        float y = Mathf.Sin(UnEnemigo.transform.position.x) * LIMITE_SUPERIOR;
+        Avanzar(UnEnemigo, new Vector3(x, y), 0.7f);
     }
 
     private void CambiarImagen(GameObject target, Sprite nuevaImagen)
