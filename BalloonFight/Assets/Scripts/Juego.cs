@@ -78,7 +78,7 @@ public class Juego : MonoBehaviour {
 
     private void CrearVidas()
     {
-        float posicionX = -12.5f;
+        float posicionX = -15.5f;
         float posicionY = 4.5f;
         float separacionX = 0.5f;
         for (int i = 0; i < CANTIDAD_MAXIMA_VIDAS; i++)
