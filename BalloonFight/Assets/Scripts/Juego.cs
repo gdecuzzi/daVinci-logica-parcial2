@@ -38,7 +38,7 @@ public class Juego : MonoBehaviour {
     #endregion
 
     #region Configuracion de los enemigos
-    int CANTIDAD_MAXIMA_ENEMIGOS = 10;
+    int CANTIDAD_MAXIMA_ENEMIGOS = 1;
 
     public List<Sprite> spriteEnemigos;
     public GameObject moldeEnemigo;
@@ -66,6 +66,7 @@ public class Juego : MonoBehaviour {
         CrearEnemigos();
         foreach (var enemigo in enemigos)
         {
+            CheckCollisions(jugador, enemigo);
             MoverEnemigo(enemigo);
         }
     }
@@ -205,8 +206,8 @@ public class Juego : MonoBehaviour {
     void CrearEnemigos()
     {
         timer += Time.deltaTime;
-        //Cada 5s invalido el timer sin importar que pase.
-        if (timer >= 5.0f)
+        //Cada 3s invalido el timer sin importar que pase.
+        if (timer >= 3.0f)
         {
             timer = 0f;
             if(enemigos.Count < CANTIDAD_MAXIMA_ENEMIGOS)
@@ -235,5 +236,23 @@ public class Juego : MonoBehaviour {
     {
         var spriteActual = target.GetComponent<SpriteRenderer>();
         spriteActual.sprite = nuevaImagen;
+    }
+
+    public void CheckCollisions(GameObject jugador, GameObject enemigo)
+    {
+        Collider2D[] collidersJugador = jugador.GetComponents<Collider2D>();
+        Collider2D[] collidersEnemigo = enemigo.GetComponents<Collider2D>();
+
+        if (collidersJugador[0].bounds.Intersects(collidersEnemigo[1].bounds))
+        {
+            PerderGlobo();
+            jugador.transform.position = new Vector2(jugador.transform.position.x + 1.0f, jugador.transform.position.y + 1.0f);
+        }
+
+        if (collidersJugador[1].bounds.Intersects(collidersEnemigo[0].bounds))
+        {
+            print("Mataste enemigo");
+            //TODO: implementar muerte del enemigo
+        }
     }
 }
