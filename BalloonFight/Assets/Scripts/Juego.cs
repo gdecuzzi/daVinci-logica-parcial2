@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine.UI;
 
 public class Juego : MonoBehaviour {
 
@@ -10,6 +11,8 @@ public class Juego : MonoBehaviour {
     public float LIMITE_SUPERIOR;
     public int CANTIDAD_MAXIMA_GLOBOS = 2;
     public int CANTIDAD_MAXIMA_VIDAS = 2;
+    public Text score;
+    private int internalScore = 0;
     #endregion
 
     #region Definicion jugador
@@ -253,6 +256,13 @@ public class Juego : MonoBehaviour {
         {
             print("Mataste enemigo");
             //TODO: implementar muerte del enemigo
+            sumarPuntaje();
         }
+    }
+
+    public void sumarPuntaje()
+    {
+        internalScore += 10;
+        score.text = internalScore + "";
     }
 }
