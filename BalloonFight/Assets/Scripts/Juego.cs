@@ -33,7 +33,7 @@ public class Juego : MonoBehaviour {
 
 
     #region configuracion
-    public Vector2 posicionInicialJugador = new Vector2(-10f,-3.2f);
+    public Vector2 posicionInicialJugador = new Vector2(-10f, -3.2f);
     public float FUERZA_INICIAL_JUGADOR = 4f;
     public int VELOCIDAD_INICIAL_JUGADOR = 2;
     #endregion
@@ -52,6 +52,7 @@ public class Juego : MonoBehaviour {
     #endregion
     public GameObject moldeVida;
     public GameObject moldeGameOver;
+    public GameObject moldeGanaste; 
 
     private bool terminado = false;
 
@@ -78,8 +79,9 @@ public class Juego : MonoBehaviour {
     {
         if(cantidadEnemigosCreados == CANTIDAD_ENEMIGOS_EN_NIVEL && enemigos.Count == 0)
         {
-            terminado = true;
             print("Ganaste!!!!");
+            terminado = true;
+            Instantiate(moldeGanaste).transform.position = new Vector3(0,0,0);
             velocidadJugador = 0;
             fuerzaMovimientoVerticalJugador = 0; 
         }
