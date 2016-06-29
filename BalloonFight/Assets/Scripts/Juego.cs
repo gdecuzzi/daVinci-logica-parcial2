@@ -7,10 +7,10 @@ using UnityEngine.UI;
 public class Juego : MonoBehaviour {
 
     #region Configuracion general del juego
-    public int LIMITE_DERECHO = 10;
+    public int LIMITE_DERECHO;
     public float LIMITE_SUPERIOR;
-    public int CANTIDAD_MAXIMA_GLOBOS = 2;
-    public int CANTIDAD_MAXIMA_VIDAS = 2;
+    public int CANTIDAD_MAXIMA_GLOBOS;
+    public int CANTIDAD_MAXIMA_VIDAS;
     public Text score;
     private int internalScore = 0;
     #endregion
@@ -33,7 +33,7 @@ public class Juego : MonoBehaviour {
 
 
     #region configuracion
-    public Vector2 posicionInicialJugador = new Vector2(-10f,-3.2f);
+    public Vector2 posicionInicialJugador = new Vector2(-10f, -3.2f);
     public float FUERZA_INICIAL_JUGADOR = 4f;
     public int VELOCIDAD_INICIAL_JUGADOR = 2;
     #endregion
@@ -52,6 +52,7 @@ public class Juego : MonoBehaviour {
     #endregion
     public GameObject moldeVida;
     public GameObject moldeGameOver;
+    public GameObject moldeGanaste; 
 
     private bool terminado = false;
 
@@ -78,8 +79,9 @@ public class Juego : MonoBehaviour {
     {
         if(cantidadEnemigosCreados == CANTIDAD_ENEMIGOS_EN_NIVEL && enemigos.Count == 0)
         {
-            terminado = true;
             print("Ganaste!!!!");
+            terminado = true;
+            Instantiate(moldeGanaste).transform.position = new Vector3(0,0,0);
             velocidadJugador = 0;
             fuerzaMovimientoVerticalJugador = 0; 
         }
@@ -90,7 +92,7 @@ public class Juego : MonoBehaviour {
 
     private void CrearVidas()
     {
-        float posicionX = -15.5f;
+        float posicionX = -LIMITE_DERECHO + 0.5f;
         float posicionY = 4.5f;
         float separacionX = 0.5f;
         for (int i = 0; i < CANTIDAD_MAXIMA_VIDAS; i++)
@@ -111,11 +113,11 @@ public class Juego : MonoBehaviour {
 
     private void MovimientoDelJugador(GameObject jugador, int velocidad, float fuerzaMovimiento)
     {
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKeyUp(KeyCode.UpArrow))
         {
             ModificarAltura(jugador, 1, fuerzaMovimiento);
         }
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKeyUp(KeyCode.DownArrow))
         {
             ModificarAltura(jugador, -1, fuerzaMovimiento);
         }
@@ -196,20 +198,35 @@ public class Juego : MonoBehaviour {
         //esto es para que no se acumule la fuerza
         rb.velocity = Vector3.zero;
         rb.AddForce(Vector3.up * direccion* fuerzaDeMovimiento, ForceMode2D.Impulse);
+
+        if (objeto.transform.position.y >= LIMITE_SUPERIOR)
+        {
+            objeto.transform.position = new Vector2(objeto.transform.position.x, LIMITE_SUPERIOR);
+        }
+
+    }
+
+    private void Rebotar(GameObject jugador, float fuerza)
+    {
+        Rigidbody2D rb = jugador.GetComponent<Rigidbody2D>();
+        rb.velocity = Vector3.zero;
+        rb.AddForce(new Vector3(0.5f, 0.5f, 0) * fuerza, ForceMode2D.Impulse);
     }
 
     private void Avanzar(GameObject objeto, Vector3 destino, float velocidad)
     {
-        if(objeto.transform.position.x > LIMITE_DERECHO){
+        Vector3 posicionDestino = objeto.transform.position + destino * Time.deltaTime * velocidad;
+
+        if (posicionDestino.x > LIMITE_DERECHO){
             MoverObjetoEnX(objeto, -LIMITE_DERECHO);
         }
-        else if(objeto.transform.position.x < -LIMITE_DERECHO)
+        else if(posicionDestino.x < -LIMITE_DERECHO)
         {
             MoverObjetoEnX(objeto, LIMITE_DERECHO);
         }
         else
         {
-            objeto.transform.position += destino * Time.deltaTime * velocidad ;
+            objeto.transform.position = posicionDestino;
         }
     }
 
@@ -301,12 +318,13 @@ public class Juego : MonoBehaviour {
         if (collidersJugador[0].bounds.Intersects(collidersEnemigo[1].bounds))
         {
             PerderGlobo();
-            jugador.transform.position = new Vector2(jugador.transform.position.x + 1.0f, jugador.transform.position.y + 1.0f);
+            Avanzar(jugador, jugador.transform.position += new Vector3(1, 1, 0),1);
+            Rebotar(jugador,fuerzaMovimientoVerticalJugador);
         }
         if (collidersJugador[1].bounds.Intersects(collidersEnemigo[0].bounds))
         {
             muertos.Add(enemigo);
-            jugador.transform.position = new Vector2(jugador.transform.position.x + 1.0f, jugador.transform.position.y + 1.0f);
+            Rebotar(jugador,0.5f);
             sumarPuntaje();
         }
     }
