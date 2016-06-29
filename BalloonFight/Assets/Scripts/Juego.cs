@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using UnityEngine.UI;
 
 public class Juego : MonoBehaviour {
 
@@ -10,6 +11,8 @@ public class Juego : MonoBehaviour {
     public float LIMITE_SUPERIOR;
     public int CANTIDAD_MAXIMA_GLOBOS = 2;
     public int CANTIDAD_MAXIMA_VIDAS = 2;
+    public Text score;
+    private int internalScore = 0;
     #endregion
 
     #region Definicion jugador
@@ -87,7 +90,7 @@ public class Juego : MonoBehaviour {
 
     private void CrearVidas()
     {
-        float posicionX = -12.5f;
+        float posicionX = -15.5f;
         float posicionY = 4.5f;
         float separacionX = 0.5f;
         for (int i = 0; i < CANTIDAD_MAXIMA_VIDAS; i++)
@@ -304,11 +307,13 @@ public class Juego : MonoBehaviour {
         {
             muertos.Add(enemigo);
             jugador.transform.position = new Vector2(jugador.transform.position.x + 1.0f, jugador.transform.position.y + 1.0f);
+            sumarPuntaje();
         }
     }
 
-    private void MatarEnemigo(GameObject enemigo)
+    public void sumarPuntaje()
     {
-        //enemigo.SetActive(false);        
+        internalScore += 10;
+        score.text = internalScore + "";
     }
 }
