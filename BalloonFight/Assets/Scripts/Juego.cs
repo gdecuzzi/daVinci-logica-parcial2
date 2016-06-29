@@ -35,20 +35,22 @@ public class Juego : MonoBehaviour {
     public int VELOCIDAD_INICIAL_JUGADOR = 2;
     #endregion
 
-    #endregion
-
     #region Configuracion de los enemigos
-    int CANTIDAD_MAXIMA_ENEMIGOS = 1;
+    public int CANTIDAD_MAXIMA_ENEMIGOS_EN_ESCENA;
+    public int CANTIDAD_ENEMIGOS_EN_NIVEL;
 
+    int cantidadEnemigosCreados = 0;
     public List<Sprite> spriteEnemigos;
     public GameObject moldeEnemigo;
     protected List<GameObject> enemigos = new List<GameObject>();
     protected float timer;
-        
     #endregion
 
+    #endregion
     public GameObject moldeVida;
     public GameObject moldeGameOver;
+
+    private bool terminado = false;
 
 
 
@@ -61,15 +63,25 @@ public class Juego : MonoBehaviour {
 
     void Update()
     {
+        if(terminado) { return; }
         CheckearJugadorAhogado();
         MovimientoDelJugador(jugador, velocidadJugador, fuerzaMovimientoVerticalJugador);
         CrearEnemigos();
-        foreach (var enemigo in enemigos)
+        MoverEnemigosCheckearColisiones();
+        CheckearJugadorGana();
+    }
+
+    private void CheckearJugadorGana()
+    {
+        if(cantidadEnemigosCreados == CANTIDAD_ENEMIGOS_EN_NIVEL && enemigos.Count == 0)
         {
-            CheckCollisions(jugador, enemigo);
-            MoverEnemigo(enemigo);
+            terminado = true;
+            print("Ganaste!!!!");
+            velocidadJugador = 0;
+            fuerzaMovimientoVerticalJugador = 0; 
         }
     }
+
 
     #region manejo de vidas y globos del jugador
 
@@ -163,6 +175,7 @@ public class Juego : MonoBehaviour {
     private void PerderJuego()
     {
         print("You loose... shame on you");
+        terminado = true;
         jugador.transform.position = new Vector2(0, 0);
         CambiarImagen(jugador, imagenJugadorMuerto);
         fuerzaMovimientoVerticalJugador = 0f;
@@ -205,21 +218,61 @@ public class Juego : MonoBehaviour {
 
     void CrearEnemigos()
     {
+        if (cantidadEnemigosCreados >= CANTIDAD_ENEMIGOS_EN_NIVEL)
+        { 
+            //ya spawneamos a todos
+            return;
+        }
+
         timer += Time.deltaTime;
         //Cada 3s invalido el timer sin importar que pase.
         if (timer >= 3.0f)
         {
             timer = 0f;
-            if(enemigos.Count < CANTIDAD_MAXIMA_ENEMIGOS)
-            {
-                var posicionInicial = new Vector2(7.76f, - 3.29f);
+            var posicionInicial = new Vector2(7.76f, - 3.29f);
+            if(enemigos.Count < CANTIDAD_MAXIMA_ENEMIGOS_EN_ESCENA)
+            {            
                 enemigos.Add(CrearEnemigo(posicionInicial));
+            }
+            else
+            {
+                HabilitarEnemigos(posicionInicial);
+            }
+        }
+    }
+
+    private void MoverEnemigosCheckearColisiones()
+    {
+        List<GameObject> muertos = new List<GameObject>();
+        foreach (var enemigo in enemigos)
+        {
+            MoverEnemigo(enemigo);
+            CheckCollisions(jugador, enemigo, muertos);
+        }
+
+        foreach (var enemigo in muertos)
+        {
+            enemigos.Remove(enemigo);
+            Destroy(enemigo);
+        }
+    }
+
+
+    void HabilitarEnemigos(Vector2 posicionInicial)
+    {
+        foreach (var enemigo in enemigos)
+        {
+            if (!enemigo.activeSelf)
+            {
+                enemigo.transform.position = posicionInicial;
+                enemigo.SetActive(true);
             }
         }
     }
 
     GameObject CrearEnemigo (Vector2 posicionInicial)
     {
+        cantidadEnemigosCreados ++;
         var Enemigo = Instantiate(moldeEnemigo);
         Enemigo.transform.position = posicionInicial;
         return Enemigo;
@@ -238,21 +291,24 @@ public class Juego : MonoBehaviour {
         spriteActual.sprite = nuevaImagen;
     }
 
-    public void CheckCollisions(GameObject jugador, GameObject enemigo)
+    public void CheckCollisions(GameObject jugador, GameObject enemigo, List<GameObject> muertos)
     {
         Collider2D[] collidersJugador = jugador.GetComponents<Collider2D>();
         Collider2D[] collidersEnemigo = enemigo.GetComponents<Collider2D>();
-
         if (collidersJugador[0].bounds.Intersects(collidersEnemigo[1].bounds))
         {
             PerderGlobo();
             jugador.transform.position = new Vector2(jugador.transform.position.x + 1.0f, jugador.transform.position.y + 1.0f);
         }
-
         if (collidersJugador[1].bounds.Intersects(collidersEnemigo[0].bounds))
         {
-            print("Mataste enemigo");
-            //TODO: implementar muerte del enemigo
+            muertos.Add(enemigo);
+            jugador.transform.position = new Vector2(jugador.transform.position.x + 1.0f, jugador.transform.position.y + 1.0f);
         }
+    }
+
+    private void MatarEnemigo(GameObject enemigo)
+    {
+        //enemigo.SetActive(false);        
     }
 }
