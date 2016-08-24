@@ -142,7 +142,7 @@ public class Juego : MonoBehaviour {
     private void ExplotarGlobo()
     {
         cantidadGlobosJugador -= 1;
-        CambiarImagen(jugador, imagenJugador1Globo);
+        ChangeImage(jugador, imagenJugador1Globo);
         //como tenemos menos globos nos movemos mas lento
         fuerzaMovimientoVerticalJugador -= 2f;
         velocidadJugador += 2;
@@ -170,7 +170,7 @@ public class Juego : MonoBehaviour {
 
     private void RespawnearJugador()
     {
-        CambiarImagen(jugador, imagenJugador2Globos);
+        ChangeImage(jugador, imagenJugador2Globos);
         cantidadGlobosJugador = CANTIDAD_MAXIMA_GLOBOS;
         jugador.transform.position =posicionInicialJugador;
         fuerzaMovimientoVerticalJugador = FUERZA_INICIAL_JUGADOR;
@@ -182,7 +182,7 @@ public class Juego : MonoBehaviour {
         print("You loose... shame on you");
         terminado = true;
         jugador.transform.position = new Vector2(0, 0);
-        CambiarImagen(jugador, imagenJugadorMuerto);
+        ChangeImage(jugador, imagenJugadorMuerto);
         fuerzaMovimientoVerticalJugador = 0f;
         velocidadJugador = 0;
         GameObject resultado = Instantiate(moldeGameOver);
@@ -305,10 +305,10 @@ public class Juego : MonoBehaviour {
         Avanzar(UnEnemigo, new Vector3(x, y), 0.7f);
     }
 
-    private void CambiarImagen(GameObject target, Sprite nuevaImagen)
+    private void ChangeImage(GameObject target, Sprite newSprite)
     {
-        var spriteActual = target.GetComponent<SpriteRenderer>();
-        spriteActual.sprite = nuevaImagen;
+        var currentSrpite = target.GetComponent<SpriteRenderer>();
+        currentSrpite.sprite = newSprite;
     }
 
     public void CheckCollisions(GameObject jugador, GameObject enemigo, List<GameObject> muertos)
