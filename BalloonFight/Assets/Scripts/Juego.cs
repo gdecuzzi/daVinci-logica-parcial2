@@ -195,7 +195,7 @@ public class Juego : MonoBehaviour {
     private void ModificarAltura(GameObject objeto, int direccion, float fuerzaDeMovimiento)
     {
         Rigidbody2D rb = objeto.GetComponent<Rigidbody2D>();
-        //esto es para que no se acumule la fuerza
+        //esto es para que no se acumule la force
         rb.velocity = Vector3.zero;
         rb.AddForce(Vector3.up * direccion* fuerzaDeMovimiento, ForceMode2D.Impulse);
 
@@ -206,11 +206,11 @@ public class Juego : MonoBehaviour {
 
     }
 
-    private void Rebotar(GameObject jugador, float fuerza)
+    private void BounceCharacter(GameObject character, float force)
     {
-        Rigidbody2D rb = jugador.GetComponent<Rigidbody2D>();
+        Rigidbody2D rb = character.GetComponent<Rigidbody2D>();
         rb.velocity = Vector3.zero;
-        rb.AddForce(new Vector3(0.5f, 0.5f, 0) * fuerza, ForceMode2D.Impulse);
+        rb.AddForce(new Vector3(0.5f, 0.5f, 0) * force, ForceMode2D.Impulse);
     }
 
     private void MoveObject(GameObject anObject, Vector3 destination, float speed)
@@ -319,12 +319,12 @@ public class Juego : MonoBehaviour {
         {
             PerderGlobo();
             MoveObject(character, character.transform.position += new Vector3(1, 1, 0),1);
-            Rebotar(character, fuerzaMovimientoVerticalJugador);
+            BounceCharacter(character, fuerzaMovimientoVerticalJugador);
         }
         if (characterColliders[1].bounds.Intersects(enemyColliders[0].bounds))
         {
             deadEnemies.Add(enemy);
-            Rebotar(character,0.5f);
+            BounceCharacter(character,0.5f);
             IncreaseScore();
         }
     }
