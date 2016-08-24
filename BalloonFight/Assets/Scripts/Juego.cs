@@ -42,7 +42,7 @@ public class Juego : MonoBehaviour {
     public int CANTIDAD_MAXIMA_ENEMIGOS_EN_ESCENA;
     public int CANTIDAD_ENEMIGOS_EN_NIVEL;
 
-    int cantidadEnemigosCreados = 0;
+    int enemyCreatedQuantity = 0;
     public List<Sprite> spriteEnemigos;
     public GameObject moldeEnemigo;
     protected List<GameObject> enemigos = new List<GameObject>();
@@ -77,7 +77,7 @@ public class Juego : MonoBehaviour {
 
     private void CheckearJugadorGana()
     {
-        if(cantidadEnemigosCreados == CANTIDAD_ENEMIGOS_EN_NIVEL && enemigos.Count == 0)
+        if(enemyCreatedQuantity == CANTIDAD_ENEMIGOS_EN_NIVEL && enemigos.Count == 0)
         {
             print("Ganaste!!!!");
             terminado = true;
@@ -238,7 +238,7 @@ public class Juego : MonoBehaviour {
 
     void CrearEnemigos()
     {
-        if (cantidadEnemigosCreados >= CANTIDAD_ENEMIGOS_EN_NIVEL)
+        if (enemyCreatedQuantity >= CANTIDAD_ENEMIGOS_EN_NIVEL)
         { 
             //ya spawneamos a todos
             return;
@@ -252,7 +252,7 @@ public class Juego : MonoBehaviour {
             var posicionInicial = new Vector2(7.76f, - 3.29f);
             if(enemigos.Count < CANTIDAD_MAXIMA_ENEMIGOS_EN_ESCENA)
             {            
-                enemigos.Add(CrearEnemigo(posicionInicial));
+                enemigos.Add(CreateEnemy(posicionInicial));
             }
             else
             {
@@ -290,12 +290,12 @@ public class Juego : MonoBehaviour {
         }
     }
 
-    GameObject CrearEnemigo (Vector2 posicionInicial)
+    GameObject CreateEnemy (Vector2 initialPosition)
     {
-        cantidadEnemigosCreados ++;
-        var Enemigo = Instantiate(moldeEnemigo);
-        Enemigo.transform.position = posicionInicial;
-        return Enemigo;
+        enemyCreatedQuantity ++;
+        var enemy = Instantiate(moldeEnemigo);
+        enemy.transform.position = initialPosition;
+        return enemy;
     }
 
     private void MoveEnemy(GameObject enemy)
