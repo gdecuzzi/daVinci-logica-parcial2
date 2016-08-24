@@ -15,7 +15,7 @@ public class Juego : MonoBehaviour {
     private int internalScore = 0;
     #endregion
 
-    #region Definicion jugador
+    #region Definicion character
     public GameObject jugador;
 
     #region posibles imagenes
@@ -60,7 +60,7 @@ public class Juego : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        jugador = GameObject.Find("jugador-2globos");
+        jugador = GameObject.Find("character-2globos");
         RespawnearJugador();
         CrearVidas();
     }
@@ -88,7 +88,7 @@ public class Juego : MonoBehaviour {
     }
 
 
-    #region manejo de vidas y globos del jugador
+    #region manejo de vidas y globos del character
 
     private void CrearVidas()
     {
@@ -311,20 +311,20 @@ public class Juego : MonoBehaviour {
         currentSrpite.sprite = newSprite;
     }
 
-    public void CheckCollisions(GameObject jugador, GameObject enemigo, List<GameObject> muertos)
+    public void CheckCollisions(GameObject character, GameObject enemy, List<GameObject> deadEnemies)
     {
-        Collider2D[] collidersJugador = jugador.GetComponents<Collider2D>();
-        Collider2D[] collidersEnemigo = enemigo.GetComponents<Collider2D>();
-        if (collidersJugador[0].bounds.Intersects(collidersEnemigo[1].bounds))
+        Collider2D[] characterColliders = character.GetComponents<Collider2D>();
+        Collider2D[] enemyColliders = enemy.GetComponents<Collider2D>();
+        if (characterColliders[0].bounds.Intersects(enemyColliders[1].bounds))
         {
             PerderGlobo();
-            Avanzar(jugador, jugador.transform.position += new Vector3(1, 1, 0),1);
-            Rebotar(jugador,fuerzaMovimientoVerticalJugador);
+            Avanzar(character, character.transform.position += new Vector3(1, 1, 0),1);
+            Rebotar(character, fuerzaMovimientoVerticalJugador);
         }
-        if (collidersJugador[1].bounds.Intersects(collidersEnemigo[0].bounds))
+        if (characterColliders[1].bounds.Intersects(enemyColliders[0].bounds))
         {
-            muertos.Add(enemigo);
-            Rebotar(jugador,0.5f);
+            deadEnemies.Add(enemy);
+            Rebotar(character,0.5f);
             IncreaseScore();
         }
     }
