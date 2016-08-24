@@ -16,7 +16,7 @@ public class Juego : MonoBehaviour {
     #endregion
 
     #region Definicion character
-    public GameObject jugador;
+    public GameObject character;
 
     #region posibles imagenes
     public Sprite imagenJugador1Globo;
@@ -39,7 +39,7 @@ public class Juego : MonoBehaviour {
     #endregion
 
     #region Configuracion de los enemies
-    public int CANTIDAD_MAXIMA_ENEMIGOS_EN_ESCENA;
+    public int MAX_ENEMY_QUANTITY_IN_SCENE;
     public int CANTIDAD_ENEMIGOS_EN_NIVEL;
 
     int enemyCreatedQuantity = 0;
@@ -60,7 +60,7 @@ public class Juego : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        jugador = GameObject.Find("character-2globos");
+        character = GameObject.Find("character-2globos");
         RespawnearJugador();
         CrearVidas();
     }
@@ -69,9 +69,9 @@ public class Juego : MonoBehaviour {
     {
         if(terminado) { return; }
         CheckearJugadorAhogado();
-        MovimientoDelJugador(jugador, velocidadJugador, fuerzaMovimientoVerticalJugador);
-        CrearEnemigos();
-        MoverEnemigosCheckearColisiones();
+        MovimientoDelJugador(character, velocidadJugador, fuerzaMovimientoVerticalJugador);
+        CreateEnemies();
+        MoveEnemiesAndCheckColisions();
         CheckearJugadorGana();
     }
 
@@ -105,7 +105,7 @@ public class Juego : MonoBehaviour {
 
     private void CheckearJugadorAhogado()
     {
-        if (jugador.transform.position.y < -TOP_LIMIT)
+        if (character.transform.position.y < -TOP_LIMIT)
         {
             PerderVida();
         }
@@ -142,7 +142,7 @@ public class Juego : MonoBehaviour {
     private void ExplotarGlobo()
     {
         cantidadGlobosJugador -= 1;
-        ChangeImage(jugador, imagenJugador1Globo);
+        ChangeImage(character, imagenJugador1Globo);
         //como tenemos menos globos nos movemos mas lento
         fuerzaMovimientoVerticalJugador -= 2f;
         velocidadJugador += 2;
@@ -170,9 +170,9 @@ public class Juego : MonoBehaviour {
 
     private void RespawnearJugador()
     {
-        ChangeImage(jugador, imagenJugador2Globos);
+        ChangeImage(character, imagenJugador2Globos);
         cantidadGlobosJugador = CANTIDAD_MAXIMA_GLOBOS;
-        jugador.transform.position =posicionInicialJugador;
+        character.transform.position =posicionInicialJugador;
         fuerzaMovimientoVerticalJugador = FUERZA_INICIAL_JUGADOR;
         velocidadJugador = VELOCIDAD_INICIAL_JUGADOR;
     }
@@ -181,8 +181,8 @@ public class Juego : MonoBehaviour {
     {
         print("You loose... shame on you");
         terminado = true;
-        jugador.transform.position = new Vector2(0, 0);
-        ChangeImage(jugador, imagenJugadorMuerto);
+        character.transform.position = new Vector2(0, 0);
+        ChangeImage(character, imagenJugadorMuerto);
         fuerzaMovimientoVerticalJugador = 0f;
         velocidadJugador = 0;
         GameObject resultado = Instantiate(moldeGameOver);
@@ -236,7 +236,7 @@ public class Juego : MonoBehaviour {
     }
     #endregion
 
-    void CrearEnemigos()
+    void CreateEnemies()
     {
         if (enemyCreatedQuantity >= CANTIDAD_ENEMIGOS_EN_NIVEL)
         { 
@@ -249,28 +249,28 @@ public class Juego : MonoBehaviour {
         if (timer >= 3.0f)
         {
             timer = 0f;
-            var posicionInicial = new Vector2(7.76f, - 3.29f);
-            if(enemies.Count < CANTIDAD_MAXIMA_ENEMIGOS_EN_ESCENA)
+            var initialPosition = new Vector2(7.76f, - 3.29f);
+            if(enemies.Count < MAX_ENEMY_QUANTITY_IN_SCENE)
             {            
-                enemies.Add(CreateEnemy(posicionInicial));
+                enemies.Add(CreateEnemy(initialPosition));
             }
             else
             {
-                EnableEnemies(posicionInicial);
+                EnableEnemies(initialPosition);
             }
         }
     }
 
-    private void MoverEnemigosCheckearColisiones()
+    private void MoveEnemiesAndCheckColisions()
     {
-        List<GameObject> muertos = new List<GameObject>();
-        foreach (var enemigo in enemies)
+        List<GameObject> deadEnemies = new List<GameObject>();
+        foreach (var enemy in enemies)
         {
-            MoveEnemy(enemigo);
-            CheckCollisions(jugador, enemigo, muertos);
+            MoveEnemy(enemy);
+            CheckCollisions(character, enemy, deadEnemies);
         }
 
-        foreach (var enemigo in muertos)
+        foreach (var enemigo in deadEnemies)
         {
             enemies.Remove(enemigo);
             Destroy(enemigo);
