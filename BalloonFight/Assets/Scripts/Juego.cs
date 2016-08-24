@@ -218,11 +218,11 @@ public class Juego : MonoBehaviour {
         Vector3 posicionDestino = objeto.transform.position + destino * Time.deltaTime * velocidad;
 
         if (posicionDestino.x > LIMITE_DERECHO){
-            MoverObjetoEnX(objeto, -LIMITE_DERECHO);
+            MoveGameObjectInX(objeto, -LIMITE_DERECHO);
         }
         else if(posicionDestino.x < -LIMITE_DERECHO)
         {
-            MoverObjetoEnX(objeto, LIMITE_DERECHO);
+            MoveGameObjectInX(objeto, LIMITE_DERECHO);
         }
         else
         {
@@ -230,9 +230,9 @@ public class Juego : MonoBehaviour {
         }
     }
 
-    private void MoverObjetoEnX(GameObject objeto, float nuevoX)
+    private void MoveGameObjectInX(GameObject anObject, float newX)
     {
-        objeto.transform.position = new Vector2(nuevoX, objeto.transform.position.y);
+        anObject.transform.position = new Vector2(newX, anObject.transform.position.y);
     }
     #endregion
 
