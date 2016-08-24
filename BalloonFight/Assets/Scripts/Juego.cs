@@ -8,7 +8,7 @@ public class Juego : MonoBehaviour {
 
     #region Configuracion general del juego
     public int LIMITE_DERECHO;
-    public float LIMITE_SUPERIOR;
+    public float TOP_LIMIT;
     public int CANTIDAD_MAXIMA_GLOBOS;
     public int CANTIDAD_MAXIMA_VIDAS;
     public Text score;
@@ -105,7 +105,7 @@ public class Juego : MonoBehaviour {
 
     private void CheckearJugadorAhogado()
     {
-        if (jugador.transform.position.y < -LIMITE_SUPERIOR)
+        if (jugador.transform.position.y < -TOP_LIMIT)
         {
             PerderVida();
         }
@@ -199,9 +199,9 @@ public class Juego : MonoBehaviour {
         rb.velocity = Vector3.zero;
         rb.AddForce(Vector3.up * direccion* fuerzaDeMovimiento, ForceMode2D.Impulse);
 
-        if (objeto.transform.position.y >= LIMITE_SUPERIOR)
+        if (objeto.transform.position.y >= TOP_LIMIT)
         {
-            objeto.transform.position = new Vector2(objeto.transform.position.x, LIMITE_SUPERIOR);
+            objeto.transform.position = new Vector2(objeto.transform.position.x, TOP_LIMIT);
         }
 
     }
@@ -266,7 +266,7 @@ public class Juego : MonoBehaviour {
         List<GameObject> muertos = new List<GameObject>();
         foreach (var enemigo in enemigos)
         {
-            MoverEnemigo(enemigo);
+            MoveEnemy(enemigo);
             CheckCollisions(jugador, enemigo, muertos);
         }
 
@@ -298,11 +298,11 @@ public class Juego : MonoBehaviour {
         return Enemigo;
     }
 
-    void MoverEnemigo(GameObject UnEnemigo)
+    private void MoveEnemy(GameObject enemy)
     {
         float x = 1f;
-        float y = Mathf.Sin(UnEnemigo.transform.position.x) * LIMITE_SUPERIOR;
-        Avanzar(UnEnemigo, new Vector3(x, y), 0.7f);
+        float y = Mathf.Sin(enemy.transform.position.x) * TOP_LIMIT;
+        Avanzar(enemy, new Vector3(x, y), 0.7f);
     }
 
     private void ChangeImage(GameObject target, Sprite newSprite)
