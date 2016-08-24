@@ -325,11 +325,11 @@ public class Juego : MonoBehaviour {
         {
             muertos.Add(enemigo);
             Rebotar(jugador,0.5f);
-            sumarPuntaje();
+            IncreaseScore();
         }
     }
 
-    public void sumarPuntaje()
+    public void IncreaseScore()
     {
         internalScore += 10;
         score.text = internalScore + "";
