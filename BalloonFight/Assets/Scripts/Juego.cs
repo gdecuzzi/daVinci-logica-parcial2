@@ -38,14 +38,14 @@ public class Juego : MonoBehaviour {
     public int VELOCIDAD_INICIAL_JUGADOR = 2;
     #endregion
 
-    #region Configuracion de los enemigos
+    #region Configuracion de los enemies
     public int CANTIDAD_MAXIMA_ENEMIGOS_EN_ESCENA;
     public int CANTIDAD_ENEMIGOS_EN_NIVEL;
 
     int enemyCreatedQuantity = 0;
     public List<Sprite> spriteEnemigos;
     public GameObject moldeEnemigo;
-    protected List<GameObject> enemigos = new List<GameObject>();
+    protected List<GameObject> enemies = new List<GameObject>();
     protected float timer;
     #endregion
 
@@ -77,7 +77,7 @@ public class Juego : MonoBehaviour {
 
     private void CheckearJugadorGana()
     {
-        if(enemyCreatedQuantity == CANTIDAD_ENEMIGOS_EN_NIVEL && enemigos.Count == 0)
+        if(enemyCreatedQuantity == CANTIDAD_ENEMIGOS_EN_NIVEL && enemies.Count == 0)
         {
             print("Ganaste!!!!");
             terminado = true;
@@ -250,13 +250,13 @@ public class Juego : MonoBehaviour {
         {
             timer = 0f;
             var posicionInicial = new Vector2(7.76f, - 3.29f);
-            if(enemigos.Count < CANTIDAD_MAXIMA_ENEMIGOS_EN_ESCENA)
+            if(enemies.Count < CANTIDAD_MAXIMA_ENEMIGOS_EN_ESCENA)
             {            
-                enemigos.Add(CreateEnemy(posicionInicial));
+                enemies.Add(CreateEnemy(posicionInicial));
             }
             else
             {
-                HabilitarEnemigos(posicionInicial);
+                EnableEnemies(posicionInicial);
             }
         }
     }
@@ -264,7 +264,7 @@ public class Juego : MonoBehaviour {
     private void MoverEnemigosCheckearColisiones()
     {
         List<GameObject> muertos = new List<GameObject>();
-        foreach (var enemigo in enemigos)
+        foreach (var enemigo in enemies)
         {
             MoveEnemy(enemigo);
             CheckCollisions(jugador, enemigo, muertos);
@@ -272,20 +272,20 @@ public class Juego : MonoBehaviour {
 
         foreach (var enemigo in muertos)
         {
-            enemigos.Remove(enemigo);
+            enemies.Remove(enemigo);
             Destroy(enemigo);
         }
     }
 
 
-    void HabilitarEnemigos(Vector2 posicionInicial)
+    void EnableEnemies(Vector2 initialPosition)
     {
-        foreach (var enemigo in enemigos)
+        foreach (var enemy in enemies)
         {
-            if (!enemigo.activeSelf)
+            if (!enemy.activeSelf)
             {
-                enemigo.transform.position = posicionInicial;
-                enemigo.SetActive(true);
+                enemy.transform.position = initialPosition;
+                enemy.SetActive(true);
             }
         }
     }
