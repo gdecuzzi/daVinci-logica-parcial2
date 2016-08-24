@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class Juego : MonoBehaviour {
 
     #region Configuracion general del juego
-    public int LIMITE_DERECHO;
+    public int RIGHT_LIMIT;
     public float TOP_LIMIT;
     public int CANTIDAD_MAXIMA_GLOBOS;
     public int CANTIDAD_MAXIMA_VIDAS;
@@ -92,7 +92,7 @@ public class Juego : MonoBehaviour {
 
     private void CrearVidas()
     {
-        float posicionX = -LIMITE_DERECHO + 0.5f;
+        float posicionX = -RIGHT_LIMIT + 0.5f;
         float posicionY = 4.5f;
         float separacionX = 0.5f;
         for (int i = 0; i < CANTIDAD_MAXIMA_VIDAS; i++)
@@ -123,11 +123,11 @@ public class Juego : MonoBehaviour {
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            Avanzar(jugador, jugador.transform.right * - 1, velocidad);
+            MoveObject(jugador, jugador.transform.right * - 1, velocidad);
         }
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            Avanzar(jugador, jugador.transform.right, velocidad);
+            MoveObject(jugador, jugador.transform.right, velocidad);
         }
     }
 
@@ -213,20 +213,20 @@ public class Juego : MonoBehaviour {
         rb.AddForce(new Vector3(0.5f, 0.5f, 0) * fuerza, ForceMode2D.Impulse);
     }
 
-    private void Avanzar(GameObject objeto, Vector3 destino, float velocidad)
+    private void MoveObject(GameObject anObject, Vector3 destination, float speed)
     {
-        Vector3 posicionDestino = objeto.transform.position + destino * Time.deltaTime * velocidad;
+        Vector3 posicionDestino = anObject.transform.position + destination * Time.deltaTime * speed;
 
-        if (posicionDestino.x > LIMITE_DERECHO){
-            MoveGameObjectInX(objeto, -LIMITE_DERECHO);
+        if (posicionDestino.x > RIGHT_LIMIT){
+            MoveGameObjectInX(anObject, -RIGHT_LIMIT);
         }
-        else if(posicionDestino.x < -LIMITE_DERECHO)
+        else if(posicionDestino.x < -RIGHT_LIMIT)
         {
-            MoveGameObjectInX(objeto, LIMITE_DERECHO);
+            MoveGameObjectInX(anObject, RIGHT_LIMIT);
         }
         else
         {
-            objeto.transform.position = posicionDestino;
+            anObject.transform.position = posicionDestino;
         }
     }
 
@@ -302,7 +302,7 @@ public class Juego : MonoBehaviour {
     {
         float x = 1f;
         float y = Mathf.Sin(enemy.transform.position.x) * TOP_LIMIT;
-        Avanzar(enemy, new Vector3(x, y), 0.7f);
+        MoveObject(enemy, new Vector3(x, y), 0.7f);
     }
 
     private void ChangeImage(GameObject target, Sprite newSprite)
@@ -318,7 +318,7 @@ public class Juego : MonoBehaviour {
         if (characterColliders[0].bounds.Intersects(enemyColliders[1].bounds))
         {
             PerderGlobo();
-            Avanzar(character, character.transform.position += new Vector3(1, 1, 0),1);
+            MoveObject(character, character.transform.position += new Vector3(1, 1, 0),1);
             Rebotar(character, fuerzaMovimientoVerticalJugador);
         }
         if (characterColliders[1].bounds.Intersects(enemyColliders[0].bounds))
